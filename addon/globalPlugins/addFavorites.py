@@ -29,17 +29,17 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 		config.conf.spec['addFavorites'] = confspec
 
 	@script(
-	description="Add favorite",
+	description=_("Add favorite"),
 	gesture="kb:NVDA+ALT+A")
 	@gui.blockAction.when(gui.blockAction.Context.MODAL_DIALOG_OPEN)
 	def script_addFavorite(self, gesture):
 		obj = api.getNavigatorObject()
 		t = obj.treeInterceptor
 		if t is None:
-			ui.message("Not in a browse mode document")
+			ui.message(_("Not in a browse mode document"))
 			return
 		if 'addFavorites' not in config.conf or config.conf['addFavorites']['path'] == '':
-			ui.message("Add favorites path is not set.")
+			ui.message(_("Add favorites path is not set."))
 			return
 		root = t.rootNVDAObject
 		title = root.name
@@ -75,8 +75,8 @@ class AddFavoriteDialog(wx.Dialog):
 		self.url = url
 		mainSizer = wx.BoxSizer(wx.VERTICAL)
 		sHelper = gui.guiHelper.BoxSizerHelper(self, wx.VERTICAL)
-		self.title_edit = sHelper.addLabeledControl("&Title:", wx.TextCtrl)
-		self.url_edit = sHelper.addLabeledControl("&URL:", wx.TextCtrl)
+		self.title_edit = sHelper.addLabeledControl(_("&Title:"), wx.TextCtrl)
+		self.url_edit = sHelper.addLabeledControl(_("&URL:"), wx.TextCtrl)
 		self.title_edit.SetValue(self.title)
 		self.url_edit.SetValue(self.url)
 		mainSizer.Add(sHelper.sizer, border=10, flag=wx.ALL)
@@ -90,25 +90,24 @@ class AddFavoriteDialog(wx.Dialog):
 		title = self.title_edit.GetValue()
 		url = self.url_edit.GetValue()
 		if not title or not url:
-			gui.messageBox("Title and URL must be set.", "Error", wx.OK | wx.ICON_ERROR)
+			gui.messageBox(_("Title and URL must be set."), _("Error"), wx.OK | wx.ICON_ERROR)
 			return
 		evt.Skip()
 
 class Panel(gui.settingsDialogs.SettingsPanel):
-	title = "Add favorites"
+	title = _("Add favorites")
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
 		self.path = None
 
 	def makeSettings(self, settingsSizer):
 		helper = gui.guiHelper.BoxSizerHelper(self, sizer=settingsSizer)
-		groupSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label="Directory")
+		groupSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label=_("Directory"))
 		groupHelper = helper.addItem(gui.guiHelper.BoxSizerHelper(self, sizer=groupSizer))
 		groupBox = groupSizer.GetStaticBox()
-		self.path_helper = helper.addItem(gui.guiHelper.PathSelectionHelper(groupBox, "Select folder", "Select favorites folder"))
+		self.path_helper = helper.addItem(gui.guiHelper.PathSelectionHelper(groupBox, _("Select folder"), _("Select favorites folder")))
 		if config.conf['addFavorites']['path']:
 			self.path_helper.pathControl.SetValue(config.conf['addFavorites']['path'])
-
 
 	def onSave(self):
 		if self.path_helper.pathControl.GetValue() != '':
