@@ -102,20 +102,17 @@ class Panel(gui.settingsDialogs.SettingsPanel):
 
 	def makeSettings(self, settingsSizer):
 		helper = gui.guiHelper.BoxSizerHelper(self, sizer=settingsSizer)
-		self.select_folder = helper.addItem(wx.Button(self, label='Select folder'))
-		self.select_folder.Bind(wx.EVT_BUTTON, self.on_select_folder)
+		groupSizer = wx.StaticBoxSizer(wx.VERTICAL, self, label="Directory")
+		groupHelper = helper.addItem(gui.guiHelper.BoxSizerHelper(self, sizer=groupSizer))
+		groupBox = groupSizer.GetStaticBox()
+		self.path_helper = helper.addItem(gui.guiHelper.PathSelectionHelper(groupBox, "Select folder", "Select favorites folder"))
+		if config.conf['addFavorites']['path']:
+			self.path_helper.pathControl.SetValue(config.conf['addFavorites']['path'])
 
-	def on_select_folder(self, evt):
-		dialog = wx.DirDialog(None, "Choose a folder", 
-		defaultPath="",
-		style=wx.DD_DEFAULT_STYLE | wx.DD_DIR_MUST_EXIST)
-		if displayDialogAsModal(dialog) != wx.ID_OK:
-			return
-		self.path = dialog.GetPath()
 
 	def onSave(self):
-		if self.path is not None:
-			config.conf['addFavorites']['path'] = self.path
+		if self.path_helper.pathControl.GetValue() != '':
+			config.conf['addFavorites']['path'] = self.path_helper.pathControl.GetValue()
 
 if globalVars.appArgs.secure:
 	class GlobalPlugin:
