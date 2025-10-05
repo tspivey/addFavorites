@@ -90,7 +90,7 @@ class AddFavoriteDialog(wx.Dialog):
 		title = self.title_edit.GetValue()
 		url = self.url_edit.GetValue()
 		if not title or not url:
-			gui.MessageBox("Title and URL must be set.", "Error", wx.OK | wx.ICON_ERROR)
+			gui.messageBox("Title and URL must be set.", "Error", wx.OK | wx.ICON_ERROR)
 			return
 		evt.Skip()
 
